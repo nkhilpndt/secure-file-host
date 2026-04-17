@@ -9,7 +9,6 @@ export async function connectDB(): Promise<void> {
   if (!uri) {
     throw new Error("MONGODB_URI environment variable is not set");
   }
-  logger.info({ uriPrefix: uri.slice(0, 40) + "..." }, "Connecting to MongoDB with URI prefix");
   await mongoose.connect(uri);
   connected = true;
   logger.info("Connected to MongoDB");
