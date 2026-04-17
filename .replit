@@ -38,3 +38,8 @@ externalPort = 3000
 [[ports]]
 localPort = 19044
 externalPort = 3002
+
+[userenv]
+
+[userenv.shared]
+MONGODB_URI = "mongodb+srv://Nikhil:nikhilishere@fileshare.strhzmi.mongodb.net/?appName=FileShare"
