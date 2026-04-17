@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "SecureShare"
+version = "1.0.0"
+id = "artifacts/file-share"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19043
+
+[services.development]
+run = "pnpm --filter @workspace/file-share run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/file-share", "run", "build" ]
+publicDir = "artifacts/file-share/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19043"
+BASE_PATH = "/"
