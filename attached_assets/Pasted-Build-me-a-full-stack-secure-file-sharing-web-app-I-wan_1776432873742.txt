@@ -1,0 +1,18 @@
+Build me a full-stack secure file sharing web app. I want to transfer files (photos, PDFs) from my phone to my laptop using a browser on both devices.
+Tech stack: Node.js + Express backend, MongoDB Atlas for metadata, Cloudinary for file storage, vanilla HTML/CSS/JS frontend (single-page, mobile-friendly).
+Features to implement:
+
+Authentication — user registers/logs in with email + password. Passwords hashed with bcrypt. On login return a JWT stored in localStorage. All protected routes require Authorization: Bearer <token> header.
+File upload (authenticated) — POST /api/upload. Accept only: image/jpeg, image/png, image/webp, image/gif, application/pdf. Max size 20MB. Use multer for parsing and cloudinary SDK to upload. On success, create a MongoDB document with: { fileId, cloudinaryPublicId, cloudinaryUrl, ownerId, accessCode, originalName, mimeType, createdAt }. fileId = 10-char nanoid. accessCode = 6-digit random number (zero-padded). Return { fileId, accessCode } to the client.
+File download (public) — GET /api/file/:fileId?code=XXXXXX. Validate that code matches the stored accessCode. If valid, redirect to the Cloudinary URL (or stream the file). If invalid, return 403.
+File deletion (owner only) — DELETE /api/file/:fileId. Verify JWT and that ownerId matches. Delete from Cloudinary using cloudinary.uploader.destroy() and remove the MongoDB document. Return 200.
+Frontend — a single index.html with three views (no framework, just DOM manipulation):
+
+Login / Register view
+Upload view (shown after login): drag-and-drop or click-to-upload area, shows allowed types, progress bar, and on success shows a card with the fileId and accessCode in large readable text, plus a copy button and a "Delete this file" button.
+Download view (accessible without login): a form with two fields — File ID and Access Code — and a Download button. On success trigger the file download in-browser.
+
+
+
+Environment variables needed (provide a .env.example): MONGODB_URI, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, JWT_SECRET, PORT.
+Also provide: a README.md explaining how to deploy to Railway in under 10 minutes, and a package.json with all dependencies. Make the UI clean and mobile-first so it works well on a phone screen.
