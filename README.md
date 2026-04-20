@@ -11,12 +11,10 @@ Transfer photos and PDFs between your phone and laptop using any browser. Files 
 - Owner can delete their files from both Cloudinary and MongoDB
 - Mobile-first, single-page UI
 
-## Deploy to Railway in under 10 minutes
+## Deploy to Render
 
-### Prerequisites
-- [Railway account](https://railway.app) (free tier works)
-- MongoDB Atlas cluster (free M0 tier works)
-- Cloudinary account (free tier works)
+### Why pnpm matters
+This project uses a **pnpm workspace** monorepo. Render defaults to npm, which can't parse pnpm-specific version syntax (`catalog:`, `workspace:*`), causing `Invalid Version` errors. You must configure Render to use pnpm as shown below.
 
 ### Steps
 
@@ -26,44 +24,47 @@ Transfer photos and PDFs between your phone and laptop using any browser. Files 
    gh repo create my-secureshare --public --push
    ```
 
-2. **Create a new Railway project**
-   - Go to [railway.app/new](https://railway.app/new)
-   - Click **Deploy from GitHub repo** → select your repo
+2. **Create a new Web Service on Render**
+   - Go to [dashboard.render.com](https://dashboard.render.com) → New → Web Service
+   - Connect your GitHub repo
 
-3. **Set environment variables** in Railway → Variables:
+3. **Configure the service:**
+
+   | Setting | Value |
+   |---------|-------|
+   | **Runtime** | Node |
+   | **Build Command** | `npm install -g pnpm@10 && pnpm install && pnpm --filter @workspace/api-server run build` |
+   | **Start Command** | `node --enable-source-maps artifacts/api-server/dist/index.mjs` |
+   | **Root Directory** | *(leave blank — use repo root)* |
+
+4. **Set environment variables** in Render → Environment:
    ```
-   MONGODB_URI=mongodb+srv://...
-   CLOUDINARY_CLOUD_NAME=...
-   CLOUDINARY_API_KEY=...
-   CLOUDINARY_API_SECRET=...
-   JWT_SECRET=<any long random string>
-   PORT=8080
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/?appName=AppName
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   JWT_SECRET=any_long_random_string
+   NODE_ENV=production
    ```
 
-4. **Set the build command** (Railway Settings → Build):
-   ```
-   pnpm install && pnpm --filter @workspace/api-server run build
-   ```
+5. **Click Deploy** — Render will install pnpm, build, and start your server.
 
-5. **Set the start command** (Railway Settings → Start):
-   ```
-   node --enable-source-maps artifacts/api-server/dist/index.mjs
-   ```
+> **Tip:** A `render.yaml` file is included in this repo — Render can auto-detect it if you use "Blueprint" deployment instead.
 
-6. **Set the root directory** to `/` (default).
+## Deploy to Railway
 
-7. **Deploy** — Railway will build and start your app. Click the generated domain to open it.
+1. **Create a new Railway project** → Deploy from GitHub repo
+2. **Set environment variables** (same as above, plus `PORT=8080`)
+3. **Build command:** `pnpm install && pnpm --filter @workspace/api-server run build`
+4. **Start command:** `node --enable-source-maps artifacts/api-server/dist/index.mjs`
 
-Done! Share your Railway URL with yourself — open it on your phone to upload, open it on your laptop to download.
+Railway auto-detects pnpm via the `pnpm-lock.yaml` file, so no extra setup needed.
 
 ## Local Development
 
 ```bash
 # Install dependencies
 pnpm install
-
-# Add environment variables (copy and fill in .env.example)
-cp .env.example .env
 
 # Start API server
 pnpm --filter @workspace/api-server run dev
@@ -72,14 +73,16 @@ pnpm --filter @workspace/api-server run dev
 pnpm --filter @workspace/file-share run dev
 ```
 
+Copy `.env.example` to `.env` and fill in your credentials.
+
 ## API Reference
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/api/auth/register` | No | Register with email + password |
 | POST | `/api/auth/login` | No | Login, returns JWT |
-| POST | `/api/upload` | Bearer token | Upload a file (multipart/form-data) |
-| GET | `/api/file/:fileId?code=XXXXXX` | No | Download file by ID + code |
+| POST | `/api/upload` | Bearer token | Upload a file (multipart/form-data, field: `file`) |
+| GET | `/api/file/:fileId?code=XXXXXX` | No | Download file by ID + 6-digit code |
 | DELETE | `/api/file/:fileId` | Bearer token | Delete own file |
 | GET | `/api/my-files` | Bearer token | List your uploaded files |
 
