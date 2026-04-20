@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npm install -g pnpm@10 && pnpm install && pnpm --filter @workspace/file-share run build",
+  "outputDirectory": "artifacts/file-share/dist/public",
+  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
+}

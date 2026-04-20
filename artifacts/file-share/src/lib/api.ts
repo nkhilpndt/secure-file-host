@@ -1,4 +1,4 @@
-const BASE = "https://secure-file-host.onrender.com/api";
+const BASE = (import.meta.env.VITE_API_URL as string | undefined) || "/api";
 
 function getToken(): string | null {
   return localStorage.getItem("token");
