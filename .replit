@@ -42,3 +42,4 @@ externalPort = 3002
 [userenv]
 
 [userenv.shared]
+MONGODB_URI = "mongodb+srv://Nikhil:iamnikhil@fileshare.strhzmi.mongodb.net/?appName=FileShare"
