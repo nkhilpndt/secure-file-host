@@ -1,5 +1,4 @@
 {
-  "installCommand": "corepack enable && corepack prepare pnpm@latest --activate",
   "buildCommand": "pnpm install --frozen-lockfile && pnpm run build --filter @workspace/file-share",
   "outputDirectory": "artifacts/file-share/dist/public",
   "rewrites": [
@@ -7,5 +6,6 @@
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "installCommand": "corepack enable && corepack prepare pnpm@latest --activate"
 }
