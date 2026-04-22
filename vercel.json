@@ -1,7 +1,7 @@
 {
-  "installCommand": "corepack enable && corepack prepare pnpm@latest --activate",
-  "buildCommand": "pnpm install --frozen-lockfile && pnpm run build --filter @workspace/file-share",
+  "buildCommand": "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm run build --filter @workspace/file-share",
   "outputDirectory": "artifacts/file-share/dist/public",
+  "nodeVersion": "18.x",
   "rewrites": [
     {
       "source": "/((?!api/).*)",
